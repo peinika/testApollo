@@ -207,7 +207,6 @@ add_files -norecurse -fileset $obj $files
 
 # add bd file
 set bd_file [file normalize "$origin_dir/bd/block_top.bd"] 
-add_files -norecurse -fileset $obj $bd_file
 # Open the BD design
 open_bd_design $bd_file
 # Generate output products
