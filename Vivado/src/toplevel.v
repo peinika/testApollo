@@ -358,7 +358,7 @@ module top (
 
     genvar gi;
     generate
-        for (gi = 0; gi < `C_GTY_REFCLKS_USED; gi++)
+	for (gi = 0; gi < `C_GTY_REFCLKS_USED; gi = gi + 1)
         begin
             IBUFDS_GTE4 u_buf_q1_clk0
             (
