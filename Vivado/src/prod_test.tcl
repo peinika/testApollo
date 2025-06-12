@@ -46,7 +46,6 @@ proc checkRequiredFiles { origin_dir} {
   set status true
   set files [list \
  "[file normalize "$origin_dir/bd/block_top.bd"]"\
- "[file normalize "$origin_dir/../../../prod_test.gen/sources_1/bd/block_top/hdl/block_top_wrapper.v"]"\
  "[file normalize "$origin_dir/src/frequency_counter.v"]"\
  "[file normalize "$origin_dir/src/reg_map.sv"]"\
  "[file normalize "$origin_dir/src/i2c_slave.vhd"]"\
@@ -189,7 +188,6 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 set obj [get_filesets sources_1]
 set files [list \
  [file normalize "${origin_dir}/bd/block_top.bd"] \
- [file normalize "${origin_dir}/../../../prod_test.gen/sources_1/bd/block_top/hdl/block_top_wrapper.v"] \
  [file normalize "${origin_dir}/src/frequency_counter.v"] \
  [file normalize "${origin_dir}/src/reg_map.sv"] \
  [file normalize "${origin_dir}/src/i2c_slave.vhd"] \
@@ -198,11 +196,36 @@ set files [list \
 ]
 add_files -norecurse -fileset $obj $files
 
-# Set 'sources_1' fileset file properties for remote files
-set file "$origin_dir/bd/block_top.bd"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "registered_with_manager" -value "1" -objects $file_obj
+## Set 'sources_1' fileset file properties for remote files
+#set file "$origin_dir/bd/block_top.bd"
+#set file [file normalize $file]
+#set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+#set_property -name "registered_with_manager" -value "1" -objects $file_obj
+
+# add bd file
+set bd_file [file normalize "$origin_dir/bd/block_top.bd"] 
+add_files -norecurse -fileset $obj $bd_file
+# Open the BD design
+open_bd_design $bd_file
+# Generate output products
+generate_target all [get_files -of_objects $obj [list "*$bd_file"]]
+make_wrapper -files [get_files -of_objects $obj [list "*$bd_file"]] -top
+
+# Add the generated wrapper to the project
+set wrapper_file [glob -nocomplain "${origin_dir}/../../../prod_test.gen/sources_1/bd/block_top/hdl/block_top_wrapper.v"]
+if {[file exists $wrapper_file]} {
+    add_files -norecurse -fileset sources_1 $wrapper_file
+} else {
+    puts "ERROR: Expected wrapper file not found: $wrapper_file"
+}
+
+# Locate and add generated wrapper
+set wrapper_file [glob -nocomplain "$origin_dir/../../../prod_test.gen/sources_1/bd/block_top/hdl/block_top_wrapper.v"]
+if {[file exists $wrapper_file]} {
+    add_files -norecurse -fileset $obj [file normalize $wrapper_file]
+} else {
+    puts "ERROR: Could not find generated wrapper file at: $wrapper_file"
+}
 
 set file "$origin_dir/src/frequency_counter.v"
 set file [file normalize $file]
@@ -652,4 +675,3 @@ move_dashboard_gadget -name {utilization_2} -row 1 -col 1
 move_dashboard_gadget -name {methodology_1} -row 2 -col 1
 
 launch_runs impl_1 -to_step write_bitstream -jobs 64
-
