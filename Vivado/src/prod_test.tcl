@@ -51,6 +51,7 @@ proc checkRequiredFiles { origin_dir} {
  "[file normalize "$origin_dir/src/reg_map.sv"]"\
  "[file normalize "$origin_dir/src/i2c_slave.vhd"]"\
  "[file normalize "$origin_dir/src/toplevel.v"]"\
+ "[file normalize "$origin_dir/src/blinky.v"]"\
  "[file normalize "$origin_dir/ip/clk/clk_wiz_0.xci"]"\
  "[file normalize "$origin_dir/ip/vio/vio_freq.xci"]"\
  "[file normalize "$origin_dir/constraints/VU13P_pins.xdc"]"\
