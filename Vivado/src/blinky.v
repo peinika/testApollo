@@ -10,7 +10,7 @@ module blinky (
     localparam integer C_CNT_05HZ = 25000000;
 
     // Registers
-    reg [23:0] r_CNT_05HZ = 0;  // 24 bits is enough for counting up to 10 million
+    reg [25:0] r_CNT_05HZ = 0;  // 24 bits is enough for counting up to 10 million
     reg r_TOGGLE_05HZ = 0;
 
     // Counter and toggle logic
