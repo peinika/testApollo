@@ -225,7 +225,7 @@ module top (
     input  wire p_in_spare[2:0],
     input  wire n_in_spare[2:0],
     output wire p_out_spare[2:0],
-    output wire n_out_spare[2:0]
+    output wire n_out_spare[2:0],
     //input  wire hdr1,
     //output  wire hdr2
     // input  wire hdr3,
@@ -236,6 +236,10 @@ module top (
     // input  wire hdr8,
     // input  wire hdr9,
     // input  wire hdr10
+
+    //blinky
+    output wire led_out100,
+    output wire led_out200
 );
     wire reset;
     assign reset = mcu_to_f;    
@@ -564,6 +568,19 @@ module top (
             default: freq_byte = 8'b0; // not needed -- all cases specified
         endcase
     end
+
+    // blinky module
+    blinky blinky100 (
+        .i_clock(clk_100),
+        .i_enable(1'b1),
+        .o_led_drive(led_out100)
+    );
+
+    blinky blinky200 (
+        .i_clock(clk_200),
+        .i_enable(1'b1),
+        .o_led_drive(led_out200)
+    );
     
     // instantiate VIO block
     vio_freq (
@@ -717,68 +734,28 @@ module top (
    // End of SYSMONE4_inst instantiation
 					
     // counter
-    reg [31:0] counter;
+    //reg [31:0] counter;
 
-    always @(posedge clk_200 or posedge reset) begin
-        if (reset) begin
-            counter <= 32'b0;
-        end else begin
-            counter <= counter + 1;
-        end
-    end
+    //always @(posedge clk_200 or posedge reset) begin
+    //    if (reset) begin
+    //        counter <= 32'b0;
+    //    end else begin
+    //        counter <= counter + 1;
+    //    end
+    //end
 
     // Assign a significant bit of the counter to led_f*_red
-    assign led_f1_red = counter[29];
-    assign led_f1_blue = counter[28];
-    assign led_f1_green = reset;
+    //assign led_f1_red = counter[29];
+    //assign led_f1_blue = counter[28];
+    //assign led_f1_green = reset;
 
-    assign led_f2_red = counter[29];
-    assign led_f2_blue = counter[28];
-    assign led_f2_green = reset;
+    //assign led_f2_red = counter[29];
+    //assign led_f2_blue = counter[28];
+    //assign led_f2_green = reset;
 
+    assign led_f1_red = led_out100;
+    assign led_f2_blue = led_out200;
 
-
-    // below here -- block design. Should be removed probably. UART is untested and 
-    // raison d'etre is unclear, but it is here for now.
-    // UART
-    wire uart_tx, uart_rx;
-    IBUFDS IBUFDS_uart_rx (
-        .I(p_test_conn_0),
-        .IB(n_test_conn_0),
-        .O(uart_rx)
-    );
-    OBUFDS OBUFDS_uart_tx (
-        .O(p_test_conn_1),
-        .OB(n_test_conn_1),
-        .I(uart_tx)
-    );
-    
-
-    wire [31:0] ubaze_addr;
-    wire [31:0] ublaze_dbus;
-
-    // block design
-    block_top_wrapper bd(
-        .clk_100MHz(clk_100),
-        .gpio_rtl_0_tri_i(ublaze_dbus),
-        .gpio_rtl_1_tri_o(ubaze_addr),
-        .reset_rtl_0(reset),
-        .uart_rtl_0_rxd(uart_rx),
-        .uart_rtl_0_txd(uart_tx)
-        );
-
-    reg_map #(
-        .NUM_RW(2),
-        .NUM_RO(2*`C_GTY_REFCLKS_USED+`C_LOGIC_CLK_USED+2)
-    ) rmap_ublaze (
-        .clk(clk_200),
-        .rst(reset),
-        .addr(ubaze_addr[5:0]),
-        .wdata(),
-        .write_en(),
-        .rdata(ublaze_dbus),
-        .status(status_array)
-    );
 
 
 endmodule
