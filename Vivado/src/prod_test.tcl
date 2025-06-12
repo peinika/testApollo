@@ -40,6 +40,8 @@
 #    "/nfs/cms/tracktrigger/wittich/test_fpga/Cornell_CM_Rev3_HW/Vivado/constraints/design.xdc"
 #
 #*****************************************************************************************
+
+# Set origin to srcs/.. i.e. .../Vivado
 set origin_dir [file normalize "[file dirname [info script]]/.."]
 
 # Check file required for this script exists
@@ -209,23 +211,15 @@ add_files -norecurse -fileset $obj $bd_file
 # Open the BD design
 open_bd_design $bd_file
 # Generate output products
-generate_target all [get_files -of_objects $obj [list "*$bd_file"]]
-make_wrapper -files [get_files -of_objects $obj [list "*$bd_file"]] -top
+generate_target all [get_files "$bd_file"]
+make_wrapper -files [get_files "$bd_file"] -top
 
 # Add the generated wrapper to the project
-set wrapper_file [glob -nocomplain "${origin_dir}/../../../prod_test.gen/sources_1/bd/block_top/hdl/block_top_wrapper.v"]
+set wrapper_file [file normalize "${origin_dir}/.gen/sources_1/bd/block_top/hdl/block_top_wrapper.v"]
 if {[file exists $wrapper_file]} {
     add_files -norecurse -fileset sources_1 $wrapper_file
 } else {
     puts "ERROR: Expected wrapper file not found: $wrapper_file"
-}
-
-# Locate and add generated wrapper
-set wrapper_file [glob -nocomplain "$origin_dir/../../../prod_test.gen/sources_1/bd/block_top/hdl/block_top_wrapper.v"]
-if {[file exists $wrapper_file]} {
-    add_files -norecurse -fileset $obj [file normalize $wrapper_file]
-} else {
-    puts "ERROR: Could not find generated wrapper file at: $wrapper_file"
 }
 
 set file "$origin_dir/src/frequency_counter.v"
