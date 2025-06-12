@@ -40,7 +40,7 @@
 #    "/nfs/cms/tracktrigger/wittich/test_fpga/Cornell_CM_Rev3_HW/Vivado/constraints/design.xdc"
 #
 #*****************************************************************************************
-set origin_dir [file dirname [info script]]/../
+set origin_dir [file normalize "[file dirname [info script]]/.."]
 
 # Check file required for this script exists
 proc checkRequiredFiles { origin_dir} {
