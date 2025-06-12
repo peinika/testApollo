@@ -3,7 +3,7 @@
     "design_info": {
       "boundary_crc": "0x1124CB4368F460BB",
       "device": "xcvu13p-flga2577-1-e",
-      "gen_directory": "../../../../prod_test.gen/sources_1/bd/block_top",
+      "gen_directory": "../.gen/sources_1/bd/block_top",
       "name": "block_top",
       "rev_ctrl_bd_flag": "RevCtrlBdOff",
       "synth_flow_mode": "Hierarchical",
