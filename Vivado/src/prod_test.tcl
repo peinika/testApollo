@@ -28,7 +28,6 @@
 # 3. The following remote source files that were added to the original project:-
 #
 #    "/nfs/cms/tracktrigger/wittich/test_fpga/Cornell_CM_Rev3_HW/Vivado/bd/block_top.bd"
-#    "/nfs/cms/tracktrigger/wittich/prod_test.gen/sources_1/bd/block_top/hdl/block_top_wrapper.v"
 #    "/nfs/cms/tracktrigger/wittich/test_fpga/Cornell_CM_Rev3_HW/Vivado/src/frequency_counter.v"
 #    "/nfs/cms/tracktrigger/wittich/test_fpga/Cornell_CM_Rev3_HW/Vivado/src/reg_map.sv"
 #    "/nfs/cms/tracktrigger/wittich/test_fpga/Cornell_CM_Rev3_HW/Vivado/src/i2c_slave.vhd"
@@ -40,9 +39,6 @@
 #    "/nfs/cms/tracktrigger/wittich/test_fpga/Cornell_CM_Rev3_HW/Vivado/constraints/design.xdc"
 #
 #*****************************************************************************************
-
-# Set origin to srcs/.. i.e. .../Vivado
-set origin_dir [file normalize "[file dirname [info script]]/.."]
 
 # Check file required for this script exists
 proc checkRequiredFiles { origin_dir} {
@@ -71,13 +67,13 @@ proc checkRequiredFiles { origin_dir} {
 }
 # Set the reference directory for source file relative paths (by default the value is script directory path)
 #set origin_dir "."
-#set origin_dir [file dirname [file dirname [file dirname [info script]]]]
+set origin_dir [file dirname [file dirname [file dirname [info script]]]]
 
 
 # Use origin directory path location variable, if specified in the tcl shell
-#if { [info exists ::origin_dir_loc] } {
-#  set origin_dir $::origin_dir_loc
-#}
+if { [info exists ::origin_dir_loc] } {
+  set origin_dir $::origin_dir_loc
+}
 
 # Set the project name
 set _xil_proj_name_ "test_proc"
@@ -199,27 +195,11 @@ set files [list \
 ]
 add_files -norecurse -fileset $obj $files
 
-## Set 'sources_1' fileset file properties for remote files
-#set file "$origin_dir/bd/block_top.bd"
-#set file [file normalize $file]
-#set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-#set_property -name "registered_with_manager" -value "1" -objects $file_obj
-
-# add bd file
-set bd_file [file normalize "$origin_dir/bd/block_top.bd"] 
-# Open the BD design
-open_bd_design $bd_file
-# Generate output products
-generate_target all [get_files "$bd_file"]
-make_wrapper -files [get_files "$bd_file"] -top
-
-# Add the generated wrapper to the project
-set wrapper_file [file normalize "${origin_dir}/.gen/sources_1/bd/block_top/hdl/block_top_wrapper.v"]
-if {[file exists $wrapper_file]} {
-    add_files -norecurse -fileset sources_1 $wrapper_file
-} else {
-    puts "ERROR: Expected wrapper file not found: $wrapper_file"
-}
+# Set 'sources_1' fileset file properties for remote files
+set file "$origin_dir/bd/block_top.bd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "registered_with_manager" -value "1" -objects $file_obj
 
 set file "$origin_dir/src/frequency_counter.v"
 set file [file normalize $file]
@@ -241,11 +221,6 @@ set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 
-set file "$origin_dir/src/blinky.v"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
-
 
 # Set 'sources_1' fileset file properties for local files
 # None
@@ -254,6 +229,12 @@ set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
 set obj [get_filesets sources_1]
 set_property -name "dataflow_viewer_settings" -value "min_width=16" -objects $obj
 set_property -name "top" -value "top" -objects $obj
+
+set file "$origin_dir/src/blinky.v"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "SystemVerilog" -objects $file_obj
+
 
 # Set 'sources_1' fileset object
 set obj [get_filesets sources_1]
@@ -359,6 +340,12 @@ catch {
  set idrFlowPropertiesConstraints [get_param runs.disableIDRFlowPropertyConstraints]
  set_param runs.disableIDRFlowPropertyConstraints 1
 }
+
+# generate wrapper for block diagram file
+update_compile_order -fileset sources_1
+make_wrapper -files [get_files $origin_dir/bd/block_top.bd] -top
+add_files -norecurse $origin_dir/bd/prod_test.gen/sources_1/bd/block_top/hdl/block_top_wrapper.v
+update_compile_order -fileset sources_1
 
 # Create 'synth_1' run (if not found)
 if {[string equal [get_runs -quiet synth_1] ""]} {
