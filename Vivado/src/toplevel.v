@@ -225,7 +225,7 @@ module top (
     input  wire p_in_spare[2:0],
     input  wire n_in_spare[2:0],
     output wire p_out_spare[2:0],
-    output wire n_out_spare[2:0],
+    output wire n_out_spare[2:0]
     //input  wire hdr1,
     //output  wire hdr2
     // input  wire hdr3,
