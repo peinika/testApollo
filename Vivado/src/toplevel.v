@@ -237,10 +237,12 @@ module top (
     // input  wire hdr9,
     // input  wire hdr10
 
-    //blinky
-    output wire led_out100,
-    output wire led_out200
 );
+
+	    //blinky
+    wire led_out100;
+    wire led_out200;
+
     wire reset;
     assign reset = mcu_to_f;    
 
