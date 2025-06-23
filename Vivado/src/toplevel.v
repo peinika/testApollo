@@ -573,7 +573,7 @@ module top (
 
     // blinky module
     blinky #(
-        .CLOCK_FREQ(100_000_000) // Set clock frequency to 200 MHz
+        .CLOCK_FREQ(100_000_000) // Set clock frequency to 100 MHz
     ) blinky100 (
         .i_clock(clk_100),
         .i_enable(1'b1),
@@ -760,7 +760,11 @@ module top (
     //assign led_f2_green = reset;
 
     assign led_f1_red = led_out200;
-    assign led_f2_blue = led_out100;
+    assign led_f1_green = led_out100;
+    assign led_f1_blue = 1'b1;
+    assign led_f2_red = led_out100;
+    assign led_f2_green = led_out200;
+    assign led_f2_blue = 1'b1;
 
 
 
