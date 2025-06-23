@@ -1,4 +1,9 @@
-module blinky (
+`timescale 1ns / 1ps
+// based on code originally written by Alex Madorsky. 
+// Lightly modified. Thanks Alex!
+
+module blimky #(parameter CLOCK_FREQ = 32'd100_000_000)
+(
     input wire i_clock,
     input wire i_enable,
     output wire o_led_drive
