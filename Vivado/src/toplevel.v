@@ -239,7 +239,7 @@ module top (
 
 );
 
-	    //blinky
+        //blinky
     wire led_out100;
     wire led_out200;
 
@@ -360,7 +360,7 @@ module top (
 
     genvar gi;
     generate
-	for (gi = 0; gi < `C_GTY_REFCLKS_USED; gi = gi + 1)
+    for (gi = 0; gi < `C_GTY_REFCLKS_USED; gi = gi + 1)
         begin
             IBUFDS_GTE4 u_buf_q1_clk0
             (
@@ -572,13 +572,17 @@ module top (
     end
 
     // blinky module
-    blinky blinky100 (
+    blinky #(
+        .CLOCK_FREQ(100_000_000) // Set clock frequency to 200 MHz
+    ) blinky100 (
         .i_clock(clk_100),
         .i_enable(1'b1),
         .o_led_drive(led_out100)
     );
 
-    blinky blinky200 (
+    blinky #(
+        .CLOCK_FREQ(200_000_000) // Set clock frequency to 200 MHz
+    ) blinky200 (
         .i_clock(clk_200),
         .i_enable(1'b1),
         .o_led_drive(led_out200)
@@ -734,7 +738,7 @@ module top (
    );
 
    // End of SYSMONE4_inst instantiation
-					
+                    
     // counter
     //reg [31:0] counter;
 
@@ -755,8 +759,8 @@ module top (
     //assign led_f2_blue = counter[28];
     //assign led_f2_green = reset;
 
-    assign led_f1_red = led_out100;
-    assign led_f2_blue = led_out200;
+    assign led_f1_red = led_out200;
+    assign led_f2_blue = led_out100;
 
 
 
