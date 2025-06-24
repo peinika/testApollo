@@ -239,10 +239,6 @@ module top (
 
 );
 
-        //blinky
-    (* keep = "true" *) wire led_out100; // see if (* keep = "true" *) prevents FPGA 2 from losing led_out100
-    (* keep = "true" *) wire led_out200;
-
     wire reset;
     assign reset = mcu_to_f;    
 
@@ -572,6 +568,7 @@ module top (
     end
 
     // blinky module
+    (* keep = "true" *) wire led_out100; // see if (* keep = "true" *) prevents FPGA 2 from losing led_out100
     blinky #(
         .CLOCK_FREQ(100_000_000) // Set clock frequency to 100 MHz
     ) blinky100 (
@@ -579,7 +576,8 @@ module top (
         .i_enable(1'b1),
         .o_led_drive(led_out100)
     );
-
+    
+    (* keep = "true" *) wire led_out200;
     blinky #(
         .CLOCK_FREQ(200_000_000) // Set clock frequency to 200 MHz
     ) blinky200 (
@@ -759,12 +757,12 @@ module top (
     //assign led_f2_blue = counter[28];
     //assign led_f2_green = reset;
 
-    assign led_f1_red = led_out200;
-    assign led_f1_green = led_out100;
-    assign led_f1_blue = 1'b1;
-    assign led_f2_red = led_out100;
-    assign led_f2_green = led_out200;
-    assign led_f2_blue = 1'b1;
+    assign led_f1_blue = led_out200;
+    assign led_f1_green = ~led_out100;
+    assign led_f1_red = 1'b1;
+    assign led_f2_blue = led_out100;
+    assign led_f2_green = ~led_out200;
+    assign led_f2_red = 1'b1;
 
 
 
