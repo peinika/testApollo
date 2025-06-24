@@ -240,8 +240,8 @@ module top (
 );
 
         //blinky
-    wire led_out100;
-    wire led_out200;
+    (* keep = "true" *) wire led_out100; // see if (* keep = "true" *) prevents FPGA 2 from losing led_out100
+    (* keep = "true" *) wire led_out200;
 
     wire reset;
     assign reset = mcu_to_f;    
